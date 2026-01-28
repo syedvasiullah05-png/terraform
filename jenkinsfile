@@ -7,10 +7,9 @@ pipeline {
 
     stages {
 
-        stage('Checkout from SCM') {
+        stage('Checkout SCM') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/sneha-samala/terraform.git'
+                checkout scm
             }
         }
 
@@ -26,7 +25,7 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 sh '''
-                  terraform plan -out=tfplan
+                  terraform plan
                 '''
             }
         }
@@ -35,7 +34,7 @@ pipeline {
             steps {
                 input message: 'Approve Terraform Apply?', ok: 'Apply'
                 sh '''
-                  terraform apply -auto-approve tfplan
+                  terraform apply -auto-approve
                 '''
             }
         }
@@ -43,10 +42,10 @@ pipeline {
 
     post {
         success {
-            echo "Terraform pipeline executed successfully."
+            echo 'Terraform pipeline executed successfully.'
         }
         failure {
-            echo "Terraform pipeline failed."
+            echo 'Terraform pipeline failed.'
         }
     }
 }
