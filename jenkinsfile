@@ -1,30 +1,34 @@
-pipeline {
-    agent any
-
-    stages {
-
-        stage('Checkout SCM') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Terraform Init') {
-            steps {
-                sh 'terraform init'
-            }
-        }
-
-        stage('Terraform Plan') {
-            steps {
-                sh 'terraform plan'
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                sh 'terraform apply -auto-approve'
-            }
+pipeline{ 
+  agent any
+  tools {
+      terraform 'terraform'
+  }
+  environment {
+        GIT_URL = "https://github.com/syedvasiullah05-png/terraform.git" 
+        GIT_BRANCH = "main"
+    }
+stages {
+    stage('git-clone'){
+        steps {
+            git branch:"${GIT_BRANCH}",
+            url:"${GIT_URL}"
         }
     }
+    stage('terraform-init'){
+        steps {
+            sh 'terraform init'
+        }
+    }
+    stage('terraform-plan'){
+        steps {
+            sh 'terraform plan'
+        }
+    }
+    stage('terraform-apply'){
+        steps {
+            sh 'terraform apply -auto-approve'
+        }
+    }
+  }
 }
+
