@@ -51,7 +51,7 @@ pipeline {
 
       steps {
 
-        sshagent(credentials: ['ec2-user']) {
+        sshagent(credentials: ['ssh]) {
 
           sh '''
             cd ansible
