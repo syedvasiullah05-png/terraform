@@ -1,0 +1,31 @@
+---
+- name: Common Linux Configuration
+  hosts: all
+  become: yes
+
+  tasks:
+
+    - name: Disable SELinux immediately (RHEL-based only)
+      ansible.posix.selinux:
+        state: disabled
+      when: ansible_os_family == "RedHat"
+
+    - name: Disable SELinux permanently (RHEL-based only)
+      lineinfile:
+        path: /etc/selinux/config
+        regexp: '^SELINUX='
+        line: 'SELINUX=disabled'
+      when: ansible_os_family == "RedHat"
+
+    - name: Stop firewalld (if exists)
+      service:
+        name: firewalld
+        state: stopped
+      ignore_errors: yes
+
+    - name: Disable firewalld (if exists)
+      service:
+        name: firewalld
+        enabled: no
+      ignore_errors: yes
+
